@@ -24,7 +24,7 @@ router.get('/getuser/page=:pagenumber/:sort', async (req, res) => {
                     $match : {
                         $or : [
                             {name : RegExp(sort, 'i')},
-                            {salary : RegExp(sort, 'i')}
+                            {salary : parseInt(sort)}
                         ]
                     }
                 }

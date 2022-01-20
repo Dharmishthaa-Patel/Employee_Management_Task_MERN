@@ -122,7 +122,7 @@ const Deshboard = () => {
 
                         <Container component={Box} >
                             <Pagination 
-                                count={5}
+                                count={list}
                                 color='secondary'
                                 variant='outlined'
                                 shape='squre'
