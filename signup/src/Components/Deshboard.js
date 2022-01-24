@@ -1,38 +1,38 @@
 import React, { useEffect, useState} from 'react'
 import { NavLink, useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { DELETEDATA, GETDATA, ASC_ORDER, DSC_ORDER, SEARCH} from '../Action/Action'
-import { Box, CssBaseline, Container } from '@material-ui/core'
+import { DELETEDATA, GETDATA} from '../Action/Action'
+import { Box, CssBaseline, Container, debounce } from '@material-ui/core'
 import Pagination from '@material-ui/lab/Pagination'
 
 const Deshboard = () => {
 
-    // for pagination
+    // ============ for pagination ============ //
     const [page, setPage] = useState(1)
 
-    //for Searching
-    const [search, setSearch] = useState("")
+    // ============ for Sorting And Searching ============ //
+    const [sorting, setSorting] = useState("user")
 
     const dispatch = useDispatch();
     const history = useHistory() 
 
     const list = useSelector(state => state.list)
-    console.log("list",list);
 
-    
-    //For Delete User
+    useEffect(() => {
+        dispatch(GETDATA(page,sorting))
+     }, [page,sorting])
+
+    // =========== For Delete User ============ //
     const deleteUser = (id) => {        
         dispatch(DELETEDATA(id))
         window.location.reload();
         history.push('/signup')
     }
-    
-    //Pagination
-     useEffect(() => {
-        // console.log("page", page);
-        // console.log("getdata");
-        dispatch(GETDATA(page))
-     }, [page])
+
+    // ========== For Searching user ======= //
+    const handleChange = debounce((value) => {
+        setSorting(value)
+    })
  
     return (        
          <>  
@@ -44,34 +44,34 @@ const Deshboard = () => {
                 </div>                    
             </div>                                          
 
-            <div>
-                <button className='btn btn-small' 
-                        onClick={() => dispatch(ASC_ORDER(page))}>
+            {/* =========== start Sorting =========== */}
+            <div>  
+                    <button className='btn btn-small' 
+                        onClick={() => setSorting("asc")}>
                         Ascending
-                </button>&nbsp;
-
-                <button className='btn btn-small' 
-                        onClick={() => dispatch(DSC_ORDER(page))}>
+                    </button> 
+                
+                    <button className='btn btn-small' 
+                        onClick={() => setSorting("dsc")}>
                         Descending
-                </button>
-
+                    </button>
+            {/* =========== End Sorting =========== */}    
+                
+            {/* =========== start Searching =========== */}
                     <input type="text" 
                             placeholder='Search...' 
                             className='search'
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
+                            onChange={(e) => handleChange(e.target.value)} 
                     />
-                    <button className='btn_search' 
-                            onClick={(e) => dispatch(SEARCH(page,search))}>
-                            Search 
-                    </button>
             </div>
+            {/* =========== End Searching =========== */}
 
                <div className='col-md-12  mx-auto'>
                           <table className='table table-hover'>
                                  <thead className='text-black text-center'>
                                       <tr>                                        
-                                      <th scope='col'>Name</th>
+                                           <th scope='col'>Name</th>
+                                           <th scope='col'>profession</th>
                                            <th scope='col'>Email-id</th>
                                            <th scope='col'>Password</th>
                                            <th scope='col'>Confirm Password</th>
@@ -89,6 +89,7 @@ const Deshboard = () => {
                                           return ( 
                                               <tr key={elem._id}>
                                                   <td align='center'>{elem.name}</td>
+                                                  <td align='center'>{elem.profession}</td>
                                                   <td align='center'>{elem.email}</td>
                                                   <td align='center'>{elem.pwd}</td>
                                                   <td align='center'>{elem.cpwd}</td>
@@ -116,13 +117,14 @@ const Deshboard = () => {
                                   </tbody>
                           </table>
                   </div> 
-                       
+
+                    {/* ========== Start Pagination ========== */}
                     <div>
                         <CssBaseline />
 
                         <Container component={Box} >
                             <Pagination 
-                                count={list}
+                                count={5}
                                 color='secondary'
                                 variant='outlined'
                                 shape='squre'
@@ -131,7 +133,8 @@ const Deshboard = () => {
                                 onChange={(e, value) => setPage(value)}   
                             />
                         </Container>
-                    </div>                    
+                    </div>  
+                     {/* ========== End Pagination ========== */}                  
         </>
     )    
  }

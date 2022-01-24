@@ -16,32 +16,10 @@ export const reducers = ( state = initialState, action) => {
             
         //for deshboard with pagination
         case "GETDATA" :
-            console.log("getdata",action.payload);
             return {
                 ...state,
                 list : action.payload,
                 loading : true            
-            }
-        
-        //sorting
-        case "ASC_ORDER":
-            return{
-                ...state,
-                list : action.payload
-            }
-
-        case "DSC_ORDER":
-            return{
-                ...state,
-                list : action.payload
-            }
-        
-        //searching
-        case "SEARCH":
-            console.log("search",action.payload);
-            return{
-                ...state,
-                list : action.payload
             }
 
         case "EDITDATA" :

@@ -4,36 +4,41 @@ const SignUp = require('../Models/signModel')
 const  authenticate = require("../Middleware/verifyToken")
 
 //for get user and pagination 
-router.get('/getuser/page=:pagenumber/:sort', async (req, res) => {
+router.get('/getuser/:pagenumber/:sorting', async (req, res) => {
     try {
+        
         const page = req.params.pagenumber
-        const sort = req.params.sort
+        const sorting = req.params.sorting
         const limit = 10
 
-        // ==== Aggregation ======
+        // ==== Starting Aggregation ======
         const aggregateQuery = []
 
-        if(sort === 'asc' || sort === 'dsc'){
+        if(sorting === "asc" || sorting === "dsc"){
             aggregateQuery.push(
-                {$sort : {name: sort === "asc" ? 1 : -1}}
+                { $sort : {name: sorting === "asc" ? 1 : -1} }
             )
         }
-        else if(sort !== "getdata") {
+        else if(sorting !== "user") {
+            const searchData = sorting
             aggregateQuery.push(
                 { 
                     $match : {
                         $or : [
-                            {name : RegExp(sort, 'i')},
-                            {salary : parseInt(sort)}
-                        ]
-                    }
+                            {name : RegExp("^" + searchData, 'i')},
+                            {salary : parseInt(searchData)},
+                            {salarySecond : parseInt(searchData)},
+                            {salaryThird : parseInt(searchData)}
+                         ]
+                    } 
                 }
             )
         }
-            aggregateQuery.push(
-                {$skip: (page - 1) * limit},
-                {$limit: limit},
-            )
+        aggregateQuery.push(
+            {$skip: (page - 1) * limit},
+            {$limit: limit},
+        )
+            
        
         const getUserData = await SignUp.aggregate([aggregateQuery])
         res.send(getUserData) 
@@ -44,9 +49,10 @@ router.get('/getuser/page=:pagenumber/:sort', async (req, res) => {
 
 //For Register User
 router.post('/signup', async (req, res) => {
-    console.log('post method call');
+    
     const userData = new SignUp({
         name: req.body.name,
+        profession: req.body.profession,
         email: req.body.email,
         pwd: req.body.pwd,
         cpwd: req.body.cpwd,
@@ -58,29 +64,24 @@ router.post('/signup', async (req, res) => {
     })
     try {
         const userObj = await userData.save()
-        console.log("userobj",userObj);
         res.send(userObj)
     } catch (err) {
         res.send("Error" + err)
-        console.log(err);
     }
 })
 
 //for Login User
 router.post('/signin', async (req, res) => {
-    console.log("hello");
     try {
         let token;        
         const { email } = req.body;
 
         const loginUser = await SignUp.findOne({ email: email });
-        console.log(loginUser);
-
+    
         if (loginUser) {
             
             // for token
             token = await loginUser.generateToken();
-            console.log(token);
 
             //store the token in cookie
             res.cookie("userLogin", token, {
@@ -89,11 +90,10 @@ router.post('/signin', async (req, res) => {
             })
             res.send({ message: "Login Successfully" });
         } else {
-            console.log("Invalid User");
             res.send({ error: "Invalid User"});
         }
     } catch (err) {
-        console.log(err);
+        res.send("Error" + err);
     }
 })
 
@@ -104,16 +104,15 @@ router.get('/signup/:id', async (req, res) => {
         res.send(editData)
     } catch (err) {
         res.send('Error' + err)
-        console.log(err);
     }
 })
 
 //for update User
 router.put('/signup/:id', async (req, res) => {
-    console.log("Update");
     try {
         const updateUser = await SignUp.findByIdAndUpdate(req.params.id);
         updateUser.name = req.body.name
+        updateUser.profession = req.body.profession
         updateUser.email = req.body.email
         updateUser.pwd = req.body.pwd
         updateUser.cpwd = req.body.cpwd
@@ -124,7 +123,7 @@ router.put('/signup/:id', async (req, res) => {
 
         const editObj = await updateUser.save()
         res.send(editObj)
-        console.log(editObj)
+        
     } catch (err) {
         res.send('Error' + err)
     }
@@ -147,14 +146,12 @@ router.get('/deshborad',authenticate,(req, res) => {
 })
 
 router.get('/logout', authenticate, async (req, res) => {
-    console.log("hello");
+
     try {
         //Remove token 
-        
         req.authenticateUser.Tokens = req.authenticateUser.Tokens.filter((elem) => {
             return elem.token !== req.token
         })
-        console.log(" req.authenticateUser.Token", req.authenticateUser.Tokens);
 
         //clear cookie
         res.clearCookie('userLogin');
@@ -166,4 +163,5 @@ router.get('/logout', authenticate, async (req, res) => {
         res.send(err);
     }
 })
+
 module.exports = router

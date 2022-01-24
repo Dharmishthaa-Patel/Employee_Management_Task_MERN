@@ -23,6 +23,9 @@ const SignUp = () => {
         .min(3,"Name is must be 3 character at minimum")
         .required("Name is Required"),
 
+        profession: Yup.string()
+        .required("profession is Required"),
+
         email: Yup.string()
         .email("Invalid Email Address format")
         .required("Email is Require"),
@@ -46,17 +49,18 @@ const SignUp = () => {
 
         salarySecond: Yup.string()
         .max(6)
-        .required("Salary is Required"),
+        .required("Second Salary is Required"),
 
         salaryThird: Yup.string()
         .max(6)
-        .required("Salary is Required")
+        .required("Third Salary is Required")
 
     })
 
     const formik = useFormik({
         initialValues: {
             name:'',
+            profession:'',
             email:'',
             pwd:'',
             cpwd:'',
@@ -105,6 +109,12 @@ const SignUp = () => {
                      input type="text" placeholder="Employee Name" name='name' 
                      onChange={formik.handleChange} autoComplete='off'
                      value={formik.values.name} required 
+                />
+                <br /><br />
+                <TextField 
+                     input type="text" placeholder="Employee Name" name='profession' 
+                     onChange={formik.handleChange} autoComplete='off'
+                     value={formik.values.profession} required 
                 />
                 <br /><br />
                 <TextField 

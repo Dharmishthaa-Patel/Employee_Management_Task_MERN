@@ -11,7 +11,7 @@ const Logout = () => {
     
     useEffect(() => {
         dispatch(LOGOUT())
-        window.location.reload()
+       // window.location.reload()
         history.push('/signin')
     },[])
 
