@@ -2,29 +2,29 @@ const jwt = require('jsonwebtoken');
 const SignUp = require('../Models/signModel')
 
 const Authenticate = async (req, res, next) => {
+    
     try {
-        //get cookie
-        const token = req.cookies.jwtLogin;
-        console.log('token Generate', token);
-
-        //verify token 
-        const verifyToken = jwt.verify(token, process.env.Token_SECRET)
         
-        //find the authenticate User
-        const authenticateUser = await SignUp.findOne({ _id: verifyToken._id, "Tokens.token": token })
+        // ========== get cookie ============
+        const token = req.cookies.jwtLogin;
+
+        // ========== verify token  ===============
+        const verifyToken = jwt.verify(token, process.env.TOKEN_SECRET)
+
+        // ========== find the authenticateuser ============
+        const authenticateUser = await SignUp.findOne({ _id: verifyToken._id, "Token.token": token })
 
         if (!authenticateUser) {
-            return res.send("You are Not Authenticate")
+            throw new Error('User not found')
         }
         req.token = token;
-        req.authenticateUser = authenticateUser;
+        req.authenticateUser = authenticateUser
         req.userId = authenticateUser._id;
-        console.log(req.authenticateUser);
 
         next();
     }
     catch (err) {
-        res.send("Invalid Token User")
+        res.send('User Not Found');
         console.log(err)
     }
 

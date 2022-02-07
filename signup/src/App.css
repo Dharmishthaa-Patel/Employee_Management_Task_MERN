@@ -57,3 +57,20 @@
 .btn_search{
   outline: solid 1px black;
 }
+
+select{
+  border-top: black;
+  border-left: black;
+  border-right: black;
+  width: 400px;
+}
+
+.error{
+  color: red;
+  font-size: .8rem;
+  position: absolute;
+}
+
+.formSubmit{
+  width: 400px;
+}

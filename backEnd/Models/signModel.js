@@ -1,66 +1,85 @@
 const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
 
-const signUpSchema = new mongoose.Schema ({
+// ============ create a schema ==============
 
-    name:{
+const signUpSchema = new mongoose.Schema({
+
+    name: {
         type : String,
         required : true
     },
-    profession:{
+    profession: {
         type : String,
         required : true
     },
-    email:{
-        type : String,
+    email: {
+        type : String, 
         required : true,
-        unique: true
+        unique : true,
     },
-    pwd:{
+    password: {
         type : String,
         required : true
     },
-    cpwd:{
+    confirmpassword: {
         type : String,
         required : true
     },
-    phone:{
+    phone: {
+        type : Number, 
+        required : true
+    },
+    salary1: {
         type : Number,
         required : true
     },
-    salary:{
+    salary2: {
         type : Number,
         required : true
     },
-    salarySecond:{
+    salary3: {
         type : Number,
         required : true
     },
-    salaryThird:{
-        type : Number,
+    
+    countryId: {
+        type : mongoose.Types.ObjectId, 
+        ref : 'Country',
         required : true
     },
-    Tokens : [
+    stateId: {
+        type : mongoose.Types.ObjectId, 
+        ref : 'State',
+        required : true
+    },
+    cityId: {
+        type : mongoose.Types.ObjectId, 
+        ref : 'City',
+        required : true
+    },
+    Token: [
         {
-            token : {
+            token: {
                 type : String,
                 required : true
-            },
+            }
         }
     ]
-});
+})
 
-//generate token
-signUpSchema.methods.generateToken = async function() {
-    try{
-        let token = jwt.sign({_id: this._id}, process.env.TOKEN_SECRET);
-        this.Tokens = this.Tokens.concat({ token })
+//GENERATE TOKEN
+signUpSchema.methods.generateAuthToken = async function () {
+    try {
+        let token = jwt.sign({ _id: this._id }, process.env.TOKEN_SECRET);
+        this.Token = this.Token.concat({ token });
 
         await this.save();
         return token;
-    } catch(err) {
-        console.log("Error",err)
+    }
+    catch (err) {
+        console.log(err);
     }
 }
 
-module.exports = mongoose.model('Signup',signUpSchema);
+module.exports = mongoose.model('Employee',signUpSchema);

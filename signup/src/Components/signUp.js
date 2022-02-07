@@ -2,173 +2,414 @@ import React, { useEffect,useState } from 'react';
 import { useFormik } from "formik";
 import * as Yup from 'yup';
 import { useDispatch, useSelector} from 'react-redux';
-import { TextField } from '@material-ui/core';
-import { EDITDATA, ADD_DATA, UPDATEDATA } from '../Action/Action';
+import {register_user, update_User, country, state, city, register_Toggle } from '../Action/Action';
 import queryString from 'query-string'
 import { useHistory } from 'react-router-dom';
 
+
 const SignUp = () => {
 
-    const [formikState, setFormikState] = useState([])
-    const history = useHistory();
-    const templist = useSelector(state => state.templist)
+  const { id } = queryString.parse(window.location.search);
+  
+  const history = useHistory();
+  const dispatch = useDispatch();
 
-    const { id } = queryString.parse(window.location.search);
-    console.log("id",id);
-    
-    const dispatch = useDispatch()
-    
-    const validation = Yup.object().shape({
-        name: Yup.string()
-        .min(3,"Name is must be 3 character at minimum")
-        .required("Name is Required"),
+  // ========= For Set Country Id =========
+  const [countryId, setCountryId] = useState('')
+  // ============ For Set State Id  ========
+  const [stateId, setStateId] = useState('')
+  //  ============= For Set City Id ==========
+  const [cityId, setCityId] = useState('') 
+  // ============ For Edited User Data ==========
+  const [employee, setEmployee] = useState([]) 
 
-        profession: Yup.string()
-        .required("profession is Required"),
 
-        email: Yup.string()
-        .email("Invalid Email Address format")
-        .required("Email is Require"),
+  const userData = useSelector(state => state.userData) //maping state
+  const countryData = useSelector(state => state.countryData)
+  const stateData = useSelector(state => state.stateData)
+  const cityData = useSelector(state => state.cityData)
+  const emailExist = useSelector(state => state.emailExist)
+  const registerToggle = useSelector(state => state.registerToggle)
 
-        pwd: Yup.string()
-        .min(8, "Add Minimum 3 characters")
-        .max(32)
-        .required("Password is Require"),
 
-        cpwd: Yup.string()
-        .oneOf([Yup.ref('pwd'),null], "Password is not match")
-        .required("Confirm Password is Required"),
+  // ========= For Country, State and City =========
+  const countryChange = (e) => {
+      formik.values.countryId = e.target.value
+      setCountryId(e.target.value)
+  }
 
-        phone: Yup.string()
-        .max(10)
-        .required("Contact No is Required"),
+  const stateChange = (e) => {
+      formik.values.stateId = e.target.value
+      setStateId(e.target.value)
+  }
 
-        salary1: Yup.string()
-        .max(6)
-        .required("Salary is Required"),
+  const cityChange = (e) => {
+      formik.values.cityId = e.target.value
+      setCityId(e.target.value)
+  }
 
-        salarySecond: Yup.string()
-        .max(6)
-        .required("Second Salary is Required"),
+  
+  // ========== Validation =========
+  const validationSchema = Yup.object().shape({
+      name: Yup.string()
+          .max(20, 'Must be 20 characters or less')
+          .required('Name is Required'),
+      
+  phone: Yup.string()
+          .min(10, 'Must be 10 digits or less')
+          .max(12, 'Must be 12 digits or less')
+          .required('Enter Your Phone'),
+      
+      profession: Yup.string()
+          .required('Profession is not valid!'),
+      
+      salary1: Yup.number()
+          .required('Enter Your salary1'),
+      
+      salary2: Yup.number()
+          .required('Enter Your salary2'),
+      
+      salary3: Yup.number()
+          .required('Enter Your salary3'),
+      
+      email: Yup.string()
+          .email('E-mail is not valid!')
+          .required('E-mail is required!'),
+      
+      password: Yup.string()
+          .min(6, 'must be 6 at least character')
+          .required('Password is required!'),
+      
+      confirmpassword: Yup.string()
+          .oneOf([Yup.ref('password'), null], 'Password must match')
+          .required('Password is required!'),
+      
+      countryId: Yup.string()
+          .required('Countr is required'),
+      
+      stateId: Yup.string()
+          .required('State is required'),
+      
+      cityId: Yup.string()
+          .required('City is required'),
+  })
+  // ============= Initial Value ========
+   const initialValues = {
+          name: "",
+          phone: "",
+          profession: "",
+          salary1: "",
+          salary2: "",
+          salary3: "",
+          email: "",
+          password: "",
+          confirmpassword: "",
+          countryId: "",
+          stateId: "",
+          cityId: ""
+  }
 
-        salaryThird: Yup.string()
-        .max(6)
-        .required("Third Salary is Required")
+  const formik = useFormik({
+      initialValues,
+      validationSchema, 
+      onSubmit: (values) => {
+          if (id) {
+              // ====== Update User ===== 
+                  dispatch(update_User(id, values, employee.email))
+              // ========== add new User ============
+          } else {
+                dispatch(register_user(values))
+                formik.handleReset()                                  
+          }
+      },                        
+  });
+  
+  // ========== For E-mail ===========
+  useEffect(() => {
+      if (emailExist === true) {
+          history.push('/deshboard')
+      }
+  }, [emailExist])
 
-    })
+  // =========== Register Toggle ============
+  useEffect(() => {
+      if (registerToggle === true) {
+          history.push('/signin')
+          dispatch(register_Toggle());
+      }
+  }, [registerToggle])
 
-    const formik = useFormik({
-        initialValues: {
-            name:'',
-            profession:'',
-            email:'',
-            pwd:'',
-            cpwd:'',
-            phone:'',
-            salary:'',
-            salarySecond:'',
-            salaryThird:'',
-        },
-       // validationSchema: {validation},
-        onSubmit: (values) => {
-            if(id) {
-                console.log("update",values)
-                dispatch(UPDATEDATA(id,values))
-                history.push('/deshboard')
-            } else {
-                dispatch(ADD_DATA(values))
-                history.push('/signin')
-                formik.handleReset()
-            }
-        }
-    });
+ // ============ Edit User Data ============  
+  useEffect(() => {
+      if (id) {
+          setEmployee(edit_User)
+      }
+  }, [])
+  // =========== Get Country, State, City Name For Edit User =========
+  const edit_User = userData.find((elem) => elem._id === id ? elem : null);
+  const countryEdit = edit_User && edit_User.country.map(item => item.countryName)
+  const stateEdit = edit_User && edit_User.state.map(item => item.stateName)
+  const cityEdit = edit_User && edit_User.city.map(item => item.cityName)
 
-    // id of edit data
-    useEffect(() => {  
-        if (id) {
-            dispatch(EDITDATA(id))
-            setFormikState(templist)
-        }
-    }, [])
+  //========== set update values ========
+  useEffect(() => {
+      if (id && employee) {
+          formik.setValues(employee)
+      }
+  }, [employee])
 
-    //set value of edit user
-    useEffect(() => {
-        if (id && templist) {
-            formik.setValues(templist)     
-        }
-    }, [templist])
+  // ========= Get Country ==========
+  useEffect(() => {
+      dispatch(country())
+  }, [dispatch])
+  
+  // ========= Get State ==========
+  useEffect(() => {
+      dispatch(state(countryId))
+  }, [countryId, dispatch])
 
-    return (
-        <>
-            
-            <div className="addItems">
-                <form onSubmit={formik.handleSubmit}>
-                
-                <h2> Registration Form </h2>
-                <TextField 
-                     input type="text" placeholder="Employee Name" name='name' 
-                     onChange={formik.handleChange} autoComplete='off'
-                     value={formik.values.name} required 
-                />
-                <br /><br />
-                <TextField 
-                     input type="text" placeholder="Employee Name" name='profession' 
-                     onChange={formik.handleChange} autoComplete='off'
-                     value={formik.values.profession} required 
-                />
-                <br /><br />
-                <TextField 
-                     input type="email" placeholder="Email-Id" name='email' 
-                     onChange={formik.handleChange} autoComplete='off'
-                     value={formik.values.email} required
-                />
-                <br /><br />
-                <TextField 
-                     input type="password" placeholder="Password" name='pwd' 
-                     onChange={formik.handleChange} autoComplete='off'
-                     value={formik.values.pwd} required
-                />
-                <br /><br />
-                <TextField 
-                     input type="password" placeholder="Confirm Password" name='cpwd' 
-                     onChange={formik.handleChange} autoComplete='off'
-                     value={formik.values.cpwd} required
-                />
-                <br /><br />
-                <TextField 
-                     input type="number" placeholder="Contact No" name='phone' 
-                     onChange={formik.handleChange} autoComplete='off'
-                     value={formik.values.phone} required
-                />
-                <br /><br />
-                <TextField 
-                     input type="number" placeholder="First Salary" name='salary' 
-                     onChange={formik.handleChange} autoComplete='off'
-                     value={formik.values.salary} required
-                />
-                <br /><br />
-                <TextField 
-                     input type="number" placeholder="Second Salary" name='salarySecond' 
-                     onChange={formik.handleChange} autoComplete='off'
-                     value={formik.values.salarySecond} required
-                />
-                <br /><br />
-                <TextField 
-                     input type="number" placeholder="Third Salary" name='salaryThird' 
-                     onChange={formik.handleChange} autoComplete='off'
-                     value={formik.values.salaryThird} required
-                />
-                <br /><br />
+  // ========= Get City ==========
+  useEffect(() => {
+      dispatch(city(stateId))
+  }, [stateId, dispatch])
 
-                <button type='submit' className='btn btn-dark mt-3'>
-                    {
-                        id ? 'Update' : 'Submit'
-                    }
-                </button>
-                </form> 
-            </div>
-        </>
-    )
+
+  return (
+      <>
+          <div>
+                <h1> Sign Up </h1>                    
+              <form onSubmit={formik.handleSubmit}>                    
+                  <input type="text"
+                      name="name"
+                      autoComplete='off' placeholder='Name'
+                      onChange={formik.handleChange}
+                      {...formik.getFieldProps("name")}
+                  /><br />
+                  {formik.touched.name && formik.errors.name ? (
+                      <div className="fv-plugins-message-container">
+                          <div className="fv-help-block error">
+                              {formik.errors.name}
+                          </div>
+                      </div>
+                  ) : null}
+                  <br />
+
+                  <input type="text"
+                      name='profession'
+                      autoComplete='off' placeholder='Profession'
+                      onChange={formik.handleChange}
+                      {...formik.getFieldProps("profession")}
+                  /><br />
+                  {formik.touched.profession && formik.errors.profession ? (
+                      <div className="fv-plugins-message-container">
+                          <div className="fv-help-block error">
+                              {formik.errors.profession}
+                          </div>
+                      </div>
+                  ) : null}
+                  <br />
+
+                  <input type="text"
+                      name='email'
+                      autoComplete='off' placeholder='Email - Id'
+                      onChange={formik.handleChange} 
+                      {...formik.getFieldProps("email")}
+                  /><br />
+                  {formik.touched.email && formik.errors.email ? (
+                      <div className="fv-plugins-message-container">
+                          <div className="fv-help-block error">
+                              {formik.errors.email}
+                          </div>
+                      </div>
+                  ) : null}
+                  <br />
+
+                  <input type="password"
+                      name='password'
+                      autoComplete='off' placeholder='Password'
+                      onChange={formik.handleChange}
+                      {...formik.getFieldProps("password")}
+                  /><br />
+                  {formik.touched.password && formik.errors.password ? (
+                      <div className="fv-plugins-message-container">
+                          <div className="fv-help-block error">
+                              {formik.errors.password}
+                          </div>
+                      </div>
+                  ) : null}
+                  <br />
+                  
+                  <input type="password"
+                      name='confirmpassword'
+                      autoComplete='off' placeholder='Confirm Password'
+                      onChange={formik.handleChange}
+                      {...formik.getFieldProps("confirmpassword")}
+                  /><br />
+                  {formik.touched.confirmpassword && formik.errors.confirmpassword ? (
+                      <div className="fv-plugins-message-container">
+                          <div className="fv-help-block error">
+                              {formik.errors.confirmpassword}
+                          </div>
+                      </div>
+                  ) : null}
+                  <br />
+                  
+                  <input type="number"
+                      name="phone"
+                      autoComplete='off' placeholder='Contact No'
+                      onChange={formik.handleChange}
+                      {...formik.getFieldProps("phone")}
+                  /><br />
+                  {formik.touched.phone && formik.errors.phone ? (
+                      <div className="fv-plugins-message-container">
+                          <div className="fv-help-block error">
+                              {formik.errors.phone}
+                          </div>
+                      </div>
+                  ) : null}
+                  <br />
+
+
+                  <input type="number"
+                      name='salary1'
+                      autoComplete='off' placeholder='First Salary'
+                      onChange={formik.handleChange}
+                      {...formik.getFieldProps("salary1")}
+                  /><br />
+                  {formik.touched.salary1 && formik.errors.salary1 ? (
+                      <div className="fv-plugins-message-container">
+                          <div className="fv-help-block error">
+                              {formik.errors.salary1}
+                          </div>
+                      </div>
+                  ) : null}
+                    <br />
+
+                  <input type="number"
+                      name='salary2'
+                      autoComplete='off' placeholder='Second Salary'
+                      onChange={formik.handleChange}
+                      {...formik.getFieldProps("salary2")}
+                  /><br />
+                  {formik.touched.salary2 && formik.errors.salary2 ? (
+                      <div className="fv-plugins-message-container">
+                          <div className="fv-help-block error">
+                              {formik.errors.salary2}
+                          </div>
+                      </div>
+                  ) : null}
+                  <br />
+
+                  <input type="number"
+                      name='salary3'
+                      autoComplete='off' placeholder='Third Salary'
+                      onChange={formik.handleChange}
+                      {...formik.getFieldProps("salary3")}
+                  /><br />
+                  {formik.touched.salary3 && formik.errors.salary3 ? (
+                      <div className="fv-plugins-message-container">
+                          <div className="fv-help-block error">
+                              {formik.errors.salary3}
+                          </div>
+                      </div>
+                  ) : null}
+                  <br />
+
+                  <input type="number"
+                        autoComplete="off" autoComplete='off' placeholder='Total Salary'
+                        disabled
+                        value={formik.values.salary1 + 
+                                formik.values.salary2 + 
+                                formik.values.salary3} 
+                    /><br />
+                    <br />
+                                     
+                  
+
+                  <select name="countryId" {...formik.getFieldProps("countryId")}  
+                  onChange={(e) => countryChange(e)}>
+                      <option>
+                        {countryEdit ? countryEdit: "Select Country"}
+                    </option>
+                      {
+                          countryData.map((elem) => {
+                          return (
+                              <option value={elem._id} key={elem._id}>
+                                {elem.countryName}
+                            </option>
+                          )
+                        })
+                      } 
+                  </select>
+                  <br />
+                  {formik.touched.countryId && formik.errors.countryId ? (
+                      <div className="fv-plugins-message-container">
+                          <div className="fv-help-block error">
+                              {formik.errors.countryId}
+                          </div>
+                      </div>
+                  ) : null}
+                    <br />
+
+                  <select name="stateId" {...formik.getFieldProps("stateId")}   
+                          onChange={(e) => stateChange(e)}>
+                      <option>
+                        {stateEdit ? stateEdit: "Select State"}
+                    </option>
+                      {
+                          stateData.map((elem) => {
+                          return (
+                              <option value={elem._id} key={elem._id}>
+                                { elem.stateName}
+                            </option>                        
+                          )
+                        })
+                      }                          
+                  </select><br />
+                  {formik.touched.stateId && formik.errors.stateId ? (
+                      <div className="fv-plugins-message-container">
+                          <div className="fv-help-block error">
+                              {formik.errors.stateId}
+                          </div>
+                      </div>
+                  ) : null}
+                  <br />
+
+                  <select name="cityId" {...formik.getFieldProps("cityId")}  
+                          onChange={(e) => cityChange(e)}>
+                      <option>
+                        {cityEdit ? cityEdit: "Select City"}
+                    </option>
+                      {
+                          cityData.map((elem) => {
+                          return (
+                              <option value={elem._id} key={elem._id}>
+                                {elem.cityName}
+                            </option>        
+                          )
+                        })
+                      }                        
+                  </select><br />
+                  {formik.touched.cityId && formik.errors.cityId ? (
+                      <div className="fv-plugins-message-container">
+                          <div className="fv-help-block error">
+                              {formik.errors.cityId}
+                          </div>
+                      </div>
+                  ) : null}
+                  <br />
+
+                  <button type='submit' className='btn btn-dark mt-3'>
+                                {
+                                    id ? 'Update' : 'Submit'
+                                }
+                  </button>
+
+              </form>
+              
+          </div>
+      </>
+  )
 }
 
 export default SignUp
