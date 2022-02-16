@@ -16,27 +16,44 @@ router.post('/uploadFile',authenticate, upload.array('multi-files'), async (req,
 
         const files = req.files
 
-        for (const file of files) {
-            const type = path.extname(file.originalname)
-            const uploadFiles = await cloudinary.uploader.upload(file.path, { resource_type: 'raw' })
+        //const inValidFile = []
 
-            const File = {
-                filename: file.originalname,
-                filepath: uploadFiles.secure_url,
-                public_id: uploadFiles.public_id,
-                filetype: type
-            }
+        for (const file of files) {
+            const fileTypes = path.extname(file.originalname)
+
+            // if(fileTypes !== '.png' && fileTypes !== '.jpg' && fileTypes !== '.jpeg' && 
+            //    fileTypes !== '.doc' && fileTypes !== '.docx' && fileTypes !== '.txt' &&
+            //    fileTypes !== '.pdf' && fileTypes !== '.xml'){
+
+            //     inValidFile.push(
+            //         file.originalname
+            //     )
+
+            // } else {
+                const uploadFiles = await cloudinary.uploader.upload(file.path, { resource_type: 'raw' })
+
+                const File = {
+                    filename: file.originalname,
+                    filepath: uploadFiles.secure_url,
+                    public_id: uploadFiles.public_id,
+                    filetype: fileTypes
+                }
+            // }
 
             //========== Push UploadFile in Employee Collection ========
             await Employee.updateOne({ email: req.authenticateUser.email }, 
                                      { $push: { files: File } })
         }
+        // if(inValidFile){
 
-        // ========= For Loading ========
-        const isLoading = false
+        //     console.log("inValidFile", inValidFile)
+        //     res.send(inValidFile)
 
-        // ========= Send Res ===========
-        res.send({ msg: "File  Uploaded Succeessfully ", isLoading })
+        // } else {
+
+            // ========= Send Res ===========
+            res.send({ msg: "File  Uploaded Succeessfully "})
+        // }
 
     } catch (err) {
         console.log(err)
@@ -55,12 +72,12 @@ router.get('/getUploadFile',authenticate, async (req,res) => {
 
         // ============ get Upload file List of authenticate user
         const totalFiles = req.authenticateUser.files
-        console.log("totalFiles",totalFiles)
+        //console.log("totalFiles",totalFiles)
 
 
         // =========== Count Total Pages ============= 
         let totalPage = Math.ceil(totalFiles.length/limit)
-        console.log("totalPage",totalPage)
+        //console.log("totalPage",totalPage)
 
         const aggregateQuery = []
     
@@ -80,7 +97,7 @@ router.get('/getUploadFile',authenticate, async (req,res) => {
             }
         )
         const uploadData = await Employee.aggregate([aggregateQuery])
-        console.log("uploadData",uploadData);
+        //console.log("uploadData",uploadData);
         
         // =========== Send Res ==========
         res.send({uploadData, totalPage})
@@ -91,33 +108,11 @@ router.get('/getUploadFile',authenticate, async (req,res) => {
 })
 
 // ============= Delete Upload file ==========
-// router.delete('/deleteUploadFile',authenticate, async(req,res) => {
-//     try{
-
-//         const deleteFile = await cloudinary.uploader.destroy(req.query.id, {resource_type: "raw"});
-//         log("DeleteFile", deleteFile)
-
-//         await Employee.updateOne(
-//             { email : req.authenticateUser.email},
-//             { $pull : { 
-//                 files : { 
-//                     public_id : req.query.id
-//                 }}
-//             }
-//         )
-
-//         res.send({msg: "delete successfully"})
-
-//     } catch (err) {
-//         console.log(err);
-//     }
-// })
-
 router.delete('/deleteUploadFile',authenticate, async(req,res) => {
     try{
 
         const deleteFile = await cloudinary.uploader.destroy(req.query.id, {resource_type: "raw"});
-        console.log("DeleteFile", deleteFile)
+       // console.log("DeleteFile", deleteFile)
 
         await Employee.updateOne(
             { email : req.authenticateUser.email},
@@ -131,6 +126,33 @@ router.delete('/deleteUploadFile',authenticate, async(req,res) => {
         res.send({msg: "delete successfully"})
 
     } catch (err) {
+        console.log(err);
+    }
+})
+
+router.put('/deleteMultipleFile',authenticate, async(req,res) => {
+    try{
+
+        const files = req.body
+        console.log("files",files)
+
+        for(const file of files){
+            const deleteFiles = await cloudinary.uploader.destroy(file, {resource_type: "raw"});
+            console.log("MultipleDeleteFile", deleteFiles)
+
+            await Employee.updateMany(
+                { email : req.authenticateUser.email},
+                { $pull : { 
+                    files : { 
+                        public_id : file
+                    }}
+                }
+            )
+        }
+        res.send({msg: "files deleted successfully"})
+
+    } catch (err) {
+        res.send({msg: "files Not Deleted"})
         console.log(err);
     }
 })
@@ -330,7 +352,7 @@ router.post('/signIn', async (req, res) => {
         let token;        
         const { email, password } = req.body;
 
-        // ============= find ExistUser
+        // ============= find ExistUser =============
         const userLogin = await Employee.findOne({ email: email, password: password });
 
         if (userLogin) {
@@ -339,7 +361,7 @@ router.post('/signIn', async (req, res) => {
 
             //Store the Token in Cookie
             res.cookie("jwtLogin", token, {
-                expiresIn: new Date (Date.now() + 1 * 3600 * 1000)
+                expiresIn: new Date(Date.now() + 1 * 3600 * 1000),
             })
             res.send({msg: "Login Successfully"});
         } else {

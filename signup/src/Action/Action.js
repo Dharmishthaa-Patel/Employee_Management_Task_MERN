@@ -8,8 +8,6 @@ export const get_upload_file = (page) => dispatch => {
     axios.get(`/getUploadFile/?page=${page}`)
     .then(res => {
         const getUploadFile = res.data
-        console.log("getUploadFile",getUploadFile)
-
         dispatch({
             type : "GET_UPLOAD_FILE",
             payload : getUploadFile
@@ -26,16 +24,24 @@ export const upload_file = (multi_files) => dispatch => {
     return(
         axios.post(`/uploadFile`, multi_files)
         .then((res) => {
-            toast.success("File Uploaded Successfully",{
-                position : toast.POSITION.TOP_RIGHT, 
-                autoClose :2000 
-            })
+            //if(res.data.length <= 0){
+                toast.success("File Uploaded Successfully",{
+                    position : toast.POSITION.TOP_RIGHT, 
+                    autoClose :2000 
+                })
+            //} else {
+                //toast.success(`${res.data} not Uploaded!`, { position: toast.POSITION.TOP_CENTER, autoClose: 2000 });
+            //}
+            
             dispatch({
                 type : "UPLOAD_FILE", 
                 payload: res.data
             })
         })
         .catch(error => {
+            dispatch({
+                type : "UPLOAD_FILE"
+            })
             toast.error("File Is Not Uploaded",{
                 position : toast.POSITION.TOP_RIGHT, 
                 autoClose :2000 
@@ -65,6 +71,28 @@ export const delete_file = (id) => dispatch => {
             })
             console.log("Error", error);
         })
+}
+
+// =========== Delete Multiple File ===========
+toast.configure()
+export const delete_multiple_file = (file) => dispatch => {
+    axios.put(`/deleteMultipleFile`, file)
+    .then(res => {
+        toast.success("Files Deleted Successfully",{
+            position : toast.POSITION.TOP_RIGHT, 
+            autoClose :2000 
+        })
+        dispatch({
+            type : "DELETE_MULTIPLE_FILE"
+        })
+    })
+    .catch (error => {
+        toast.error("Files Is Not Deleted",{
+            position : toast.POSITION.TOP_RIGHT, 
+            autoClose :2000 
+        })
+        console.log("Error", error);
+    })
 }
 
 // =========== Loading ==========

@@ -12,25 +12,17 @@ import Home from './Components/Home';
 import Logout  from './Components/Logout';
 import Error404 from './Components/Error404';
 import UploadFile from './Components/UploadFile';
-import { check_cookie } from './Action/Action';
 import Cookies from 'js-cookie'
 
 
 const App = () => {
 
-
-  // ======== For Cookie ===========
-  //const dispatch = useDispatch();
-
+  // ======== For Refreshing Page ========
   const cookie = Cookies.get('jwtLogin')
-  console.log("AppCookie",cookie);
-    // useEffect(() => {
-    //     dispatch(check_cookie())
-    // }, [])
 
   // ========== For LoginStatus =========
-  const LoginUser = useSelector(state => state.LoginUser)
-  console.log(LoginUser)
+  const loginStatus = useSelector(state => state.loginStatus)
+
   
   return (
      <>      
@@ -41,7 +33,6 @@ const App = () => {
           <Switch>
           
             <Route exact path='/' component={Home}></Route>  
-            
             <Route exact path='/editUser/:id' component={SignUp}></Route>
         
             <ProtectedRoute exact path='/deshboard' component={Deshboard} isAuth={cookie}></ProtectedRoute>
@@ -49,8 +40,7 @@ const App = () => {
             <ProtectedRoute exact path='/uploadfile' component={UploadFile} isAuth={cookie}></ProtectedRoute>
 
         {
-          LoginUser === "" && cookie === undefined ? (
-            
+         cookie === undefined && loginStatus === false  ? ( 
             <>
                 <Route exact path='/signup' component={SignUp}></Route>        
                 <Route exact path='/signin' component={SignIn} />
@@ -58,7 +48,6 @@ const App = () => {
               
            ) : <Redirect to = '/deshboard'/> 
         }
-
             <Route component={Error404} />  
 
         </Switch>

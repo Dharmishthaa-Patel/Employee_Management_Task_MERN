@@ -63,7 +63,8 @@ export const reducers = (state = initialState, action) => {
                 userData: action.payload.empData,
                 pageNumber: action.payload.totalPage,
                 LoginUser: action.payload.LoginUser,
-                emailExist: false
+                emailExist: false,
+                loginStatus: true
             }
         
         case "EDIT_USER":
@@ -117,14 +118,14 @@ export const reducers = (state = initialState, action) => {
                 ...state,
                 getUploadFiles: action.payload.uploadData,
                 filePageNo : action.payload.totalPage,
-                DeleteUser : false
+                DeleteUser : false,
+                loginStatus : true
             }
             
         case "UPLOAD_FILE" :
-            
             return {
                 ...state,
-                isLoading: action.payload.isLoading
+                isLoading: false
             }
 
         case "LOADER": 
@@ -134,6 +135,12 @@ export const reducers = (state = initialState, action) => {
             }
 
         case "DELETEFILE":
+            return{
+                ...state,
+                DeleteUser: true
+            }
+
+        case "DELETE_MULTIPLE_FILE":
             return{
                 ...state,
                 DeleteUser: true
