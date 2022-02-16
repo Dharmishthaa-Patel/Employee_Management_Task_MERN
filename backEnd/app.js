@@ -6,31 +6,36 @@ const cookieParser = require("cookie-parser")
 
 const app = express()
 
-// config file 
+// =========== For File Upload ========== 
+const bodyParser = require('body-parser')
+
+// =========== config file ================
 dotenv.config({path: './config.env'})
 
-//Connect to database
+// =========== Connect to database =============
 mongoose.connect(url)
 const con = mongoose.connection
 
-//Connection Open
+// =========== Connection Open =================
 con.on('open', () => {
     console.log("connected...")
 })
 
-//middleware
+// =========== middleware =================
 app.use(express.json())
-// pass the cookie 
-app.use(cookieParser());
+// =========== For cookie =================
+app.use(cookieParser())
+// ============ For upload File ============
+app.use(bodyParser.json())
 
 
-// Import Router 
+//  =========== Import Router ================
 const regRouter = require('./Routers/signRouter')
-// Route Middleware
+// =========== Route Middleware ================
 app.use('/', regRouter)
 
 
-// server listening
+// ================ server listening =================
 app.listen (5000, () => {
     console.log("server is Listening....")
 })

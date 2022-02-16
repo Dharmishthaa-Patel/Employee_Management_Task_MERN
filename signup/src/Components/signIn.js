@@ -1,5 +1,6 @@
 import React from "react";
 import { useFormik } from "formik";
+import { NavLink} from "react-router-dom";
 import * as Yup from "yup"
 import { useDispatch } from "react-redux";
 import { login_User } from "../Action/Action";
@@ -19,6 +20,7 @@ const SignIn = () => {
             .required('E-mail is required!'),
         
         password: Yup.string()
+            .min(6,'must be add at least 6 character')
             .required('Password is required!'),
     })
 
@@ -26,14 +28,15 @@ const SignIn = () => {
         initialValues,
         validationSchema,
         onSubmit: (values) => {            
-            dispatch(login_User(values))             
+            dispatch(login_User(values)) 
+            formik.handleReset()            
         }
     })
  
     return (
         <>
             <div>            
-                    <h2> Sign In </h2>
+                    <h2> Sign In </h2> <br />
                     
                     <form className="loginForm" onSubmit={formik.handleSubmit}>
                         <input type="text"
@@ -71,6 +74,11 @@ const SignIn = () => {
                             Login
                         </button>                    
                     </form>
+            </div>
+            <br />
+            
+            <div>
+                <NavLink to = "/signup">Create An Account</NavLink>
             </div>
         </>
     )

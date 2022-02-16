@@ -1,14 +1,38 @@
 const initialState = {
+    //======== get data of authenticateUser
     userData: [],
+
+    //======== For login status
     loginStatus: false,
+
+    //======== for Country, State, City
     countryData: [],
     stateData: [],
     cityData: [],
+
+    //======== For Pagination
     pageNumber: [],
+
+    //======== Check LoginUser 
     LoginUser: '',
+
+    //======== For DeleteUser & DeleteFile
     DeleteUser: false,
+
+    //======== Check email is Exists 
     emailExist: false,
-    registerToggle: false
+
+    //======== For RegisterToggle
+    registerToggle: false,
+
+    //======== Get UploadFile List
+    getUploadFiles : [],
+
+    //======== For Loader
+    isLoading: false,
+
+    //======== For UploadFile List Pagination
+    filePageNo: []
 }
 
 export const reducers = (state = initialState, action) => {
@@ -80,7 +104,41 @@ export const reducers = (state = initialState, action) => {
             return {
                 ...state,
                 cityData: action.payload
-            }        
+            }
+            
+        case "CHECK_COOKIE":
+            return {
+                ...state,
+                loginStatus: action.payload.loginStatus
+            }
+
+        case "GET_UPLOAD_FILE":
+            return {
+                ...state,
+                getUploadFiles: action.payload.uploadData,
+                filePageNo : action.payload.totalPage,
+                DeleteUser : false
+            }
+            
+        case "UPLOAD_FILE" :
+            
+            return {
+                ...state,
+                isLoading: action.payload.isLoading
+            }
+
+        case "LOADER": 
+            return{
+                ...state,
+                isLoading: true
+            }
+
+        case "DELETEFILE":
+            return{
+                ...state,
+                DeleteUser: true
+            }
+
         default:
             return state
     }

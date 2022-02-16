@@ -5,7 +5,7 @@ const Error404 = () => {
         <>
            <div>
                 <h2 align='center'> 
-                    404 Error : Page not found 
+                    404 Error : Page Not Found 
                 </h2>
            </div> 
         </>

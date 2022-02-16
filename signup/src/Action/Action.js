@@ -2,6 +2,94 @@ import axios from "axios"
 import 'react-toastify/dist/ReactToastify.css'
 import { toast } from 'react-toastify'
 
+
+// ============= GetList Of Upload File ============
+export const get_upload_file = (page) => dispatch => {
+    axios.get(`/getUploadFile/?page=${page}`)
+    .then(res => {
+        const getUploadFile = res.data
+        console.log("getUploadFile",getUploadFile)
+
+        dispatch({
+            type : "GET_UPLOAD_FILE",
+            payload : getUploadFile
+        })
+    })
+    .catch(error => {
+        console.log("Error", error);
+    })
+}
+
+// ============= Upload File =================
+toast.configure()
+export const upload_file = (multi_files) => dispatch => {
+    return(
+        axios.post(`/uploadFile`, multi_files)
+        .then((res) => {
+            toast.success("File Uploaded Successfully",{
+                position : toast.POSITION.TOP_RIGHT, 
+                autoClose :2000 
+            })
+            dispatch({
+                type : "UPLOAD_FILE", 
+                payload: res.data
+            })
+        })
+        .catch(error => {
+            toast.error("File Is Not Uploaded",{
+                position : toast.POSITION.TOP_RIGHT, 
+                autoClose :2000 
+            })
+            console.log("Error",error);
+        })
+    )
+}
+
+// ============ Delete Upload File ============
+toast.configure()
+export const delete_file = (id) => dispatch => {
+    axios.delete(`/deleteUploadFile/?id=${id}`)
+        .then(res => {
+            toast.success("File Deleted Successfully",{
+                position : toast.POSITION.TOP_RIGHT, 
+                autoClose :2000 
+            })
+            dispatch({
+                type : "DELETEFILE"
+            })
+        })
+        .catch (error => {
+            toast.error("File Is Not Deleted",{
+                position : toast.POSITION.TOP_RIGHT, 
+                autoClose :2000 
+            })
+            console.log("Error", error);
+        })
+}
+
+// =========== Loading ==========
+export const loading_Action = () => dispatch => { 
+    return (
+        dispatch({
+            type: "LOADER"
+        })
+    )
+}
+
+// ============== Check Cookie ===============
+export const check_cookie = () => dispatch => {
+    axios.get(`/checkCookie`)
+    .then((res) => {
+        const checkCookie = res.data
+        dispatch({
+            type: "CHECK_COOKIE",
+            payload: checkCookie
+        })
+    })
+    .catch (error => {
+        console.log("Error", error);
+    })
+}
 // ============== Add New User ================
 toast.configure()
 export const register_user = (values) => dispatch => {
@@ -28,7 +116,7 @@ export const register_user = (values) => dispatch => {
                 }
             })
             .catch(error => {
-                console.log('error', error);
+                console.log('Error', error);
             })
     )
 
@@ -62,7 +150,7 @@ export const login_User = (values) => dispatch => {
                     position : toast.POSITION.TOP_RIGHT, 
                     autoClose : 2000 
                 })
-                console.log('error', error);
+                console.log('Error', error);
             })
     )
 }
@@ -79,7 +167,7 @@ export const get_User = (page,sort,Request) => dispatch => {
                 })            
             })
             .catch(error => {
-                console.log("error", error);            
+                console.log("Error", error);            
             })
     )
 }
@@ -96,7 +184,7 @@ export const edit_User = (id) => dispatch => {
                 })
             })
                 .catch(error => {
-                console.log("error", error);
+                console.log("Error", error);
             })
     )
 }
@@ -120,7 +208,7 @@ export const update_User = (id, values, email) => dispatch => {
                     position : toast.POSITION.TOP_RIGHT, 
                     autoClose : 2000 
                 });
-                console.log("error", error);
+                console.log("Error", error);
             })
     )
 }
@@ -142,16 +230,21 @@ export const delete_User = (email) => dispatch => {
                 })
             })
             .catch(error => {
-                console.log("error", error);
+                console.log("Error", error);
             })
     )
 }
 
 // ============ Logout =============
+toast.configure()
 export const logout_User = () => dispatch => {
     return (
         axios.get(`/logout`)
         .then(res => {
+                toast.success("You are Logout", { 
+                    position : toast.POSITION.TOP_RIGHT, 
+                    autoClose : 2000 
+                });    
                 const userData = res.data;
                 dispatch({ 
                     type : "LOGOUT_USER", 
@@ -159,7 +252,7 @@ export const logout_User = () => dispatch => {
                 })
             })
             .catch(error => {
-                console.log("error", error);
+                console.log("Error", error);
             })
     )
 }
@@ -175,7 +268,7 @@ export const country = () => dispatch => {
                 })
             })
             .catch(error => {
-                console.log("error", error);
+                console.log("Error", error);
             })
 }
 
@@ -190,7 +283,7 @@ export const state = (countryId) => dispatch => {
                 })
             })
             .catch(error => {
-                console.log("error", error);
+                console.log("Error", error);
             })
 }
 
@@ -205,7 +298,7 @@ export const city = (stateId) => dispatch => {
                 })
             })
             .catch(error => {
-                console.log("error", error);
+                console.log("Error", error);
             })
 }
 

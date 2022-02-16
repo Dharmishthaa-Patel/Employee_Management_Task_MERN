@@ -55,7 +55,9 @@ const Deshboard = () => {
             <div className='container'>
                     <div className='row'>
                         <div className='col-md-12 my-1 text-center'>
-                            <h1>{LoginUser && (`Welcome ${LoginUser.name}`)}</h1>
+                            <h1>
+                                {LoginUser && (`Welcome ${LoginUser.name}`)}
+                            </h1>
                         </div>
                     </div>                    
             </div>

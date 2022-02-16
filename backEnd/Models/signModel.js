@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
+const bcrypt = require('bcryptjs')
 
 // ============ create a schema ==============
 
@@ -58,6 +59,22 @@ const signUpSchema = new mongoose.Schema({
         ref : 'City',
         required : true
     },
+    files : [
+        {
+            filename: {
+                type: String  
+            },
+            filepath: {
+                type: String 
+            },
+            public_id: {
+                type: String
+            },
+            filetype: {
+                type: String 
+            }
+        }
+    ],
     Token: [
         {
             token: {
@@ -68,7 +85,19 @@ const signUpSchema = new mongoose.Schema({
     ]
 })
 
-//GENERATE TOKEN
+
+// =============== bcrypt password =============
+
+// signUpSchema.pre('save', async function(next){
+//     if(this.isModified('password')) {
+//         this.password = await bcrypt.hash(this.password, 12);
+//         this.confirmpassword = await bcrypt.hash(this.confirmpassword, 12);
+//     }
+//     next();
+// })
+
+
+// =========== Generate Token ==============
 signUpSchema.methods.generateAuthToken = async function () {
     try {
         let token = jwt.sign({ _id: this._id }, process.env.TOKEN_SECRET);

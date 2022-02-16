@@ -52,37 +52,42 @@ const SignUp = () => {
   // ========== Validation =========
   const validationSchema = Yup.object().shape({
       name: Yup.string()
+          .min(3)
           .max(20, 'Must be 20 characters or less')
           .required('Name is Required'),
-      
-  phone: Yup.string()
-          .min(10, 'Must be 10 digits or less')
-          .max(12, 'Must be 12 digits or less')
-          .required('Enter Your Phone'),
-      
+
       profession: Yup.string()
+          .min(3)
           .required('Profession is not valid!'),
-      
-      salary1: Yup.number()
-          .required('Enter Your salary1'),
-      
-      salary2: Yup.number()
-          .required('Enter Your salary2'),
-      
-      salary3: Yup.number()
-          .required('Enter Your salary3'),
-      
+
       email: Yup.string()
           .email('E-mail is not valid!')
           .required('E-mail is required!'),
       
       password: Yup.string()
-          .min(6, 'must be 6 at least character')
+          .min(6, 'must be add at least 6 character')
           .required('Password is required!'),
       
       confirmpassword: Yup.string()
           .oneOf([Yup.ref('password'), null], 'Password must match')
           .required('Password is required!'),
+      
+      phone: Yup.string()
+          .min(10, 'Must be 10 digits or less')
+          .max(12, 'Must be 12 digits or less')
+          .required('Enter Your Phone'),
+      
+      salary1: Yup.number()
+          .min(3)
+          .required('Enter Your salary1'),
+      
+      salary2: Yup.number()
+          .min(3)
+          .required('Enter Your salary2'),
+      
+      salary3: Yup.number()
+          .min(3)
+          .required('Enter Your salary3'),
       
       countryId: Yup.string()
           .required('Countr is required'),
@@ -177,7 +182,7 @@ const SignUp = () => {
   return (
       <>
           <div>
-                <h1> Sign Up </h1>                    
+                <h2> Sign Up </h2> <br />                   
               <form onSubmit={formik.handleSubmit}>                    
                   <input type="text"
                       name="name"
@@ -399,10 +404,11 @@ const SignUp = () => {
                   ) : null}
                   <br />
 
-                  <button type='submit' className='btn btn-dark mt-3'>
-                                {
-                                    id ? 'Update' : 'Submit'
-                                }
+                  <button type='submit' 
+                          className='btn btn-dark mt-3'>
+                        {
+                            id ? 'Update' : 'Submit'
+                        }
                   </button>
 
               </form>

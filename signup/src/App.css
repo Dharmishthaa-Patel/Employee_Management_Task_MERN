@@ -37,27 +37,32 @@
   }
 }
 
+/* ================ for Navbar ==================== */
 .nav_div{
   display: flex;
   justify-content: space-around;
   letter-spacing: 2px;
-  margin-left: 70%;
+  margin-left: 66%;
 }
 
+/*  ============ Buttton ================= */
 .btn-small {
   outline: solid 1px purple;
   margin: 2px;
 }
 
+/*  ================== Search ================== */
 .search {
   margin-left: 80%;
   margin-top: 1%;
 }
 
+/*  ======================= Search Button ============= */
 .btn_search{
   outline: solid 1px black;
 }
 
+/* ============ Select tag ==================== */
 select{
   border-top: black;
   border-left: black;
@@ -65,12 +70,25 @@ select{
   width: 400px;
 }
 
+/*  ================== Validation Error ================== */
 .error{
   color: red;
   font-size: .8rem;
   position: absolute;
 }
 
+/* ============== form ================== */
 .formSubmit{
   width: 400px;
 }
+
+/*  =============== Upload Image =============== */
+img{
+  width: 80px;
+  height: 80px;
+}
+
+.item {
+  margin-left: 1%;
+}
+
