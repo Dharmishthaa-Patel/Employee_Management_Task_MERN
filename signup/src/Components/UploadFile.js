@@ -79,27 +79,27 @@ const UploadFile = () => {
 
     // ============ DeleteMultiple File =============
     const handleMultipleDelete = (e) => {
-        e.preventDefault()
 
-        if(!multipleFileDelete){
-            toast.error(" Please Upload File ", { 
+        if(multipleFileDelete.length <= 0){
+            e.preventDefault()
+            toast.error(" Please Select File ", { 
                 autoClose : 2000
             })
         } else {
-            window.confirm("Are You Sure?")
-            dispatch(delete_multiple_file(multipleFileDelete))
+            if(window.confirm("Are You Sure?")){
+                e.preventDefault()
+                dispatch(delete_multiple_file(multipleFileDelete))
+            }
         }
     }
 
     const handleChangeMultiple = (id) => {
-        console.log("Multiple Delete",id)
 
         if(multipleFileDelete.includes(id)){
             const arrayId = multipleFileDelete.filter((i) => {
                 return i !== id
             })
             setMultipleFileDelete(arrayId)
-            console.log(arrayId)
         } else {
             setMultipleFileDelete([...multipleFileDelete, id])
         }

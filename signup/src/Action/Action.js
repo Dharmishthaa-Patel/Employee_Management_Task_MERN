@@ -30,7 +30,7 @@ export const upload_file = (multi_files) => dispatch => {
                     autoClose :2000 
                 })
             } else {
-                toast.success(`${res.data} Not Uploaded`, { 
+                toast.warning(`${res.data} Not Uploaded`, { 
                     position: toast.POSITION.TOP_CENTER, 
                     autoClose: 3000 
                 });
@@ -67,6 +67,10 @@ export const delete_file = (id) => dispatch => {
             })
         })
         .catch (error => {
+            dispatch({
+                type : "DELETEFILE"
+            })
+            
             toast.error("File Is Not Deleted",{
                 position : toast.POSITION.TOP_RIGHT, 
                 autoClose :2000 
@@ -77,8 +81,8 @@ export const delete_file = (id) => dispatch => {
 
 // =========== Delete Multiple File ===========
 toast.configure()
-export const delete_multiple_file = (file) => dispatch => {
-    axios.put(`/deleteMultipleFile`, file)
+export const delete_multiple_file = (files) => dispatch => {
+    axios.put(`/deleteMultipleFile`, files)
     .then(res => {
         toast.success("Files Deleted Successfully",{
             position : toast.POSITION.TOP_RIGHT, 
@@ -89,6 +93,9 @@ export const delete_multiple_file = (file) => dispatch => {
         })
     })
     .catch (error => {
+        dispatch({
+            type : "DELETE_MULTIPLE_FILE"
+        })
         toast.error("Files Is Not Deleted",{
             position : toast.POSITION.TOP_RIGHT, 
             autoClose :2000 
