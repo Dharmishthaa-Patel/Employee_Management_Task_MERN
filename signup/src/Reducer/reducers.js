@@ -137,13 +137,13 @@ export const reducers = (state = initialState, action) => {
         case "DELETEFILE":
             return{
                 ...state,
-                DeleteUser: true
+                isLoading: false
             }
 
         case "DELETE_MULTIPLE_FILE":
             return{
                 ...state,
-                DeleteUser: true
+                isLoading: false
             }
 
         default:

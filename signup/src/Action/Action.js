@@ -30,7 +30,7 @@ export const upload_file = (multi_files) => dispatch => {
                     autoClose :2000 
                 })
             } else {
-                toast.warning(`${res.data} Not Uploaded`, { 
+                toast.warning(`${res.data} ${res.data.length} Files Not Uploaded`, { 
                     position: toast.POSITION.TOP_CENTER, 
                     autoClose: 3000 
                 });
@@ -70,7 +70,7 @@ export const delete_file = (id) => dispatch => {
             dispatch({
                 type : "DELETEFILE"
             })
-            
+
             toast.error("File Is Not Deleted",{
                 position : toast.POSITION.TOP_RIGHT, 
                 autoClose :2000 

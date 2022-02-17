@@ -15,6 +15,8 @@ const UploadFile = () => {
     const [pageNo, setPageNo] = useState(1)
     // =========== DeleteMultiple File =========== 
     const [multipleFileDelete, setMultipleFileDelete] = useState([])
+    // ========= All Delete =============
+    const [isChecked, setIsChecked] = useState([])
 
     const dispatch = useDispatch()
 
@@ -35,15 +37,16 @@ const UploadFile = () => {
     // =============== Submit =============
     const handleSubmit = (e) => {
 
-        e.preventDefault()
         console.log("multi-File",fileInput)
 
         if(!fileInput){
+            e.preventDefault()
             toast.error(" Please Upload File ", { 
                 autoClose : 2000
             })
         } else {
 
+            e.preventDefault()
              // ==== For Loading status ======
             dispatch(loading_Action())
 
@@ -60,7 +63,7 @@ const UploadFile = () => {
 
     useEffect(() => {
         dispatch(get_upload_file(pageNo))
-    },[isLoading, fileInput, pageNo, DeleteUser])
+    },[isLoading, fileInput, pageNo, DeleteUser,dispatch])
 
 
     // ============ Input onChange =============
@@ -70,8 +73,8 @@ const UploadFile = () => {
 
     // ============== DeleteFile ================
     const handleDelete = (file) => {
-        console.log("file",file)
         setMultipleFileDelete([])
+        dispatch(loading_Action())
 
         window.confirm("Are You Sure?")
         dispatch(delete_file(file))
@@ -88,11 +91,13 @@ const UploadFile = () => {
         } else {
             if(window.confirm("Are You Sure?")){
                 e.preventDefault()
+                dispatch(loading_Action())
                 dispatch(delete_multiple_file(multipleFileDelete))
             }
         }
     }
 
+    // ========= CheckBox OnChange ==========
     const handleChangeMultiple = (id) => {
 
         if(multipleFileDelete.includes(id)){
@@ -104,6 +109,7 @@ const UploadFile = () => {
             setMultipleFileDelete([...multipleFileDelete, id])
         }
     }
+    
 
     return (
         <>  
@@ -148,13 +154,23 @@ const UploadFile = () => {
 
                     {/* ======= For Get Upload File List ====== */}
                     <br />
-                    
+
+                    {/* {
+                        isLoading ? null : <button className='btn btn-secondary mt-3'
+                                                   onClick={handleMultipleDelete}> 
+                                                        Delete All 
+                                            </button>
+                    } */}
+
                         <div className='item'>
-                            <button className='btn btn-secondary mt-3'
-                                    onClick={handleMultipleDelete}> 
-                                Delete All 
-                            </button>
-                        <br  />
+                            <label> Select All </label> <Checkbox onChange={(e) => handleChangeMultiple(e)}  />
+                            {
+                                isLoading ? null : <button className='btn btn-secondary mt-3'
+                                                   onClick={handleMultipleDelete}> 
+                                                        Delete All 
+                                                    </button>
+                            }
+                        <br  /><br  />
 
                             {
                                 getUploadFiles[0] && getUploadFiles[0].GetFiles.length > 0
@@ -247,7 +263,7 @@ const UploadFile = () => {
                                             }
                                             
                                             {
-                                                elem.filetype === ".jpg"  ? (
+                                                elem.filetype === ".jpg" || elem.filetype === ".jpeg" || elem.filetype === ".png" ? (
                                                     <>
                                                         <h6> {elem.filename} </h6>
                                                         <img src={elem.filepath} alt='jpg' className='img' />
@@ -262,7 +278,7 @@ const UploadFile = () => {
                                                 ) : null
                                             }  
                                             
-                                            {
+                                            {/* {
                                                 elem.filetype === ".jpeg"  ? (
                                                     <>
                                                         <h6> {elem.filename} </h6>
@@ -292,7 +308,7 @@ const UploadFile = () => {
                                                         </button>
                                                     </>
                                                 ) : null
-                                            }  
+                                            }   */}
                                         </>
                                     )
                                 })
