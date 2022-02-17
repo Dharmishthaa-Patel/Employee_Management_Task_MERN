@@ -14,17 +14,17 @@ module.exports = multer({
             fieldNameSize: 200,
             fileSize: 5 * 1024 * 1024,  //5MB
         },
-    fileFilter: (req, file, cb) => {
+    // fileFilter: (req, file, cb) => {
 
-        let ext = path.extname(file.originalname)
+    //     let ext = path.extname(file.originalname)
 
-        if(ext === '.png' || ext === '.jpg' || ext === 'jpeg' || 
-           ext === '.doc' || ext === '.docx' || ext === '.txt' || 
-           ext === '.pdf' || ext === '.xml'){
-            cb(null, true)
-        } else {
-            cb(new Error("This Type of File is Not supported"), false)
-            return
-        }
-    }
+    //     if(ext === '.png' || ext === '.jpg' || ext === 'jpeg' || 
+    //        ext === '.doc' || ext === '.docx' || ext === '.txt' || 
+    //        ext === '.pdf' || ext === '.xml'){
+    //         cb(null, true)
+    //     } else {
+    //         cb(new Error("This Type of File is Not supported"), false)
+    //         return
+    //     }
+    // }
 });

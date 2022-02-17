@@ -167,7 +167,8 @@ const UploadFile = () => {
                                                         <h6> {elem.filename} </h6>
                                                         <img src='https://www.freeiconspng.com/uploads/txt-file-icon-free-search-download-as-png-ico-and-icns-iconseeker--1.png' 
                                                              alt='TXT' className='img'/>
-                                                            <Checkbox value={elem.public_id} onChange={() => handleChangeMultiple(elem.public_id)} /> 
+                                                            <Checkbox value={elem.public_id} 
+                                                                      onChange={() => handleChangeMultiple(elem.public_id)} /> 
                                                             <br />
                                                         <button onClick={() => handleDelete(elem.public_id)}
                                                                 className='btn btn-small btn-danger'>
@@ -183,7 +184,8 @@ const UploadFile = () => {
                                                         <h6> {elem.filename} </h6>
                                                         <img src='https://cdn4.vectorstock.com/i/1000x1000/62/88/monochrome-round-doc-file-icon-vector-5106288.jpg' 
                                                              alt='DOC' className='img'/> 
-                                                            <Checkbox value={elem.public_id} onChange={() => handleChangeMultiple(elem.public_id)} />
+                                                            <Checkbox value={elem.public_id} 
+                                                                      onChange={() => handleChangeMultiple(elem.public_id)} />
                                                             <br />
                                                         <button onClick={() => handleDelete(elem.public_id)} 
                                                                 className='btn btn-small btn-danger'>
@@ -199,7 +201,8 @@ const UploadFile = () => {
                                                         <h6> {elem.filename} </h6>
                                                         <img src='https://cdn4.vectorstock.com/i/1000x1000/62/88/monochrome-round-doc-file-icon-vector-5106288.jpg' 
                                                              alt='DOCX' className='img'/>
-                                                            <Checkbox value={elem.public_id} onChange={() => handleChangeMultiple(elem.public_id)} />
+                                                            <Checkbox value={elem.public_id} 
+                                                                      onChange={() => handleChangeMultiple(elem.public_id)} />
                                                             <br />
                                                         <button onClick={() => handleDelete(elem.public_id)} 
                                                                 className='btn btn-small btn-danger'>
@@ -215,7 +218,8 @@ const UploadFile = () => {
                                                         <h6> {elem.filename} </h6>
                                                         <img src='https://icons.iconarchive.com/icons/graphicloads/filetype/128/pdf-icon.png' 
                                                              alt='PDF' className='img'/>
-                                                            <Checkbox value={elem.public_id} onChange={() => handleChangeMultiple(elem.public_id)} /> 
+                                                            <Checkbox value={elem.public_id} 
+                                                                      onChange={() => handleChangeMultiple(elem.public_id)} /> 
                                                             <br />
                                                         <button onClick={() => handleDelete(elem.public_id)}
                                                                 className='btn btn-small btn-danger'>
@@ -231,7 +235,8 @@ const UploadFile = () => {
                                                         <h6> {elem.filename} </h6>
                                                         <img src='https://as1.ftcdn.net/v2/jpg/04/46/40/84/1000_F_446408465_aqlGBK2DsZTvhkcDqV6rkaOvvEMtVmau.jpg' 
                                                              alt='XML' className='img'/>
-                                                            <Checkbox value={elem.public_id} onChange={() => handleChangeMultiple(elem.public_id)} /> 
+                                                            <Checkbox value={elem.public_id} 
+                                                                      onChange={() => handleChangeMultiple(elem.public_id)} /> 
                                                             <br />
                                                         <button onClick={() => handleDelete(elem.public_id)}
                                                                 className='btn btn-small btn-danger'>
@@ -246,7 +251,8 @@ const UploadFile = () => {
                                                     <>
                                                         <h6> {elem.filename} </h6>
                                                         <img src={elem.filepath} alt='jpg' className='img' />
-                                                        <Checkbox value={elem.public_id} onChange={() => handleChangeMultiple(elem.public_id)} />
+                                                        <Checkbox value={elem.public_id} 
+                                                                  onChange={() => handleChangeMultiple(elem.public_id)} />
                                                         <br />
                                                         <button onClick={() => handleDelete(elem.public_id)}
                                                                 className='btn btn-small btn-danger'>
@@ -261,7 +267,8 @@ const UploadFile = () => {
                                                     <>
                                                         <h6> {elem.filename} </h6>
                                                         <img src={elem.filepath} alt='jpeg' className='img' />
-                                                        <Checkbox value={elem.public_id} onChange={() => handleChangeMultiple(elem.public_id)} />
+                                                        <Checkbox value={elem.public_id} 
+                                                                  onChange={() => handleChangeMultiple(elem.public_id)} />
                                                         <br />
                                                         <button onClick={() => handleDelete(elem.public_id)}
                                                                 className='btn btn-small btn-danger'>
@@ -276,7 +283,8 @@ const UploadFile = () => {
                                                     <>
                                                         <h6> {elem.filename} </h6>
                                                         <img src={elem.filepath} alt='png' className='img' />
-                                                        <Checkbox value={elem.public_id} onChange={() => handleChangeMultiple(elem.public_id)} />
+                                                        <Checkbox value={elem.public_id} 
+                                                                  onChange={() => handleChangeMultiple(elem.public_id)} />
                                                         <br />
                                                         <button onClick={() => handleDelete(elem.public_id)}
                                                                 className='btn btn-small btn-danger'>

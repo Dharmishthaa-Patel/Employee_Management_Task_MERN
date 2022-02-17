@@ -16,20 +16,21 @@ router.post('/uploadFile',authenticate, upload.array('multi-files'), async (req,
 
         const files = req.files
 
-        //const inValidFile = []
+        const inValidFile = []
 
         for (const file of files) {
+
             const fileTypes = path.extname(file.originalname)
 
-            // if(fileTypes !== '.png' && fileTypes !== '.jpg' && fileTypes !== '.jpeg' && 
-            //    fileTypes !== '.doc' && fileTypes !== '.docx' && fileTypes !== '.txt' &&
-            //    fileTypes !== '.pdf' && fileTypes !== '.xml'){
+            if(fileTypes !== '.png' && fileTypes !== '.jpg' && fileTypes !== '.jpeg' && 
+               fileTypes !== '.doc' && fileTypes !== '.docx' && fileTypes !== '.txt' &&
+               fileTypes !== '.pdf' && fileTypes !== '.xml'){
 
-            //     inValidFile.push(
-            //         file.originalname
-            //     )
+                inValidFile.push(
+                    file.originalname
+                )
 
-            // } else {
+            } else {
                 const uploadFiles = await cloudinary.uploader.upload(file.path, { resource_type: 'raw' })
 
                 const File = {
@@ -38,22 +39,24 @@ router.post('/uploadFile',authenticate, upload.array('multi-files'), async (req,
                     public_id: uploadFiles.public_id,
                     filetype: fileTypes
                 }
-            // }
-
-            //========== Push UploadFile in Employee Collection ========
+        
+                //========== Push UploadFile in Employee Collection ========
             await Employee.updateOne({ email: req.authenticateUser.email }, 
-                                     { $push: { files: File } })
+                        { $push: { files: File } })
+            }
         }
-        // if(inValidFile){
 
-        //     console.log("inValidFile", inValidFile)
-        //     res.send(inValidFile)
+        // ======== Show Invalid Upload File ==========
+        if(inValidFile){
 
-        // } else {
+            console.log("inValidFile", inValidFile)
+            res.send(inValidFile)
+
+        } else {
 
             // ========= Send Res ===========
             res.send({ msg: "File  Uploaded Succeessfully "})
-        // }
+        }
 
     } catch (err) {
         console.log(err)

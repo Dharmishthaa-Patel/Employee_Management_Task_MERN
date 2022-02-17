@@ -24,15 +24,17 @@ export const upload_file = (multi_files) => dispatch => {
     return(
         axios.post(`/uploadFile`, multi_files)
         .then((res) => {
-            //if(res.data.length <= 0){
+            if(res.data.length <= 0){
                 toast.success("File Uploaded Successfully",{
                     position : toast.POSITION.TOP_RIGHT, 
                     autoClose :2000 
                 })
-            //} else {
-                //toast.success(`${res.data} not Uploaded!`, { position: toast.POSITION.TOP_CENTER, autoClose: 2000 });
-            //}
-            
+            } else {
+                toast.success(`${res.data} Not Uploaded`, { 
+                    position: toast.POSITION.TOP_CENTER, 
+                    autoClose: 3000 
+                });
+            }
             dispatch({
                 type : "UPLOAD_FILE", 
                 payload: res.data
