@@ -147,7 +147,7 @@ router.put('/deleteMultipleFile',authenticate, async(req,res) => {
                 { email : req.authenticateUser.email},
                 { $pull : { 
                     files : { 
-                        public_id : file
+                        _id : file
                     }}
                 }
             )

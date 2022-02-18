@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { get_upload_file, loading_Action, upload_file, delete_file, delete_multiple_file } from '../Action/Action';
 import ClipLoader from "react-spinners/ClipLoader";
-import Pagination from '@material-ui/lab/Pagination'
-import { Checkbox } from '@material-ui/core';
+import Pagination from '@material-ui/lab/Pagination';
+import Checkbox from './CheckBox'
 toast.configure()
 
 const UploadFile = () => {
@@ -15,8 +15,10 @@ const UploadFile = () => {
     const [pageNo, setPageNo] = useState(1)
     // =========== DeleteMultiple File =========== 
     const [multipleFileDelete, setMultipleFileDelete] = useState([])
-    // ========= All Delete =============
-    const [isChecked, setIsChecked] = useState([])
+
+    // ========= All Delete File =============
+    const [isCheckAll, setIsCheckAll] = useState(false);
+    const [isCheck, setIsCheck] = useState([]);
 
     const dispatch = useDispatch()
 
@@ -62,6 +64,7 @@ const UploadFile = () => {
     }
 
     useEffect(() => {
+        setIsCheckAll(false)
         dispatch(get_upload_file(pageNo))
     },[isLoading, fileInput, pageNo, DeleteUser,dispatch])
 
@@ -73,6 +76,7 @@ const UploadFile = () => {
 
     // ============== DeleteFile ================
     const handleDelete = (file) => {
+
         setMultipleFileDelete([])
         dispatch(loading_Action())
 
@@ -82,8 +86,8 @@ const UploadFile = () => {
 
     // ============ DeleteMultiple File =============
     const handleMultipleDelete = (e) => {
-
-        if(multipleFileDelete.length <= 0){
+        
+        if(isCheck.length <= 0){
             e.preventDefault()
             toast.error(" Please Select File ", { 
                 autoClose : 2000
@@ -91,25 +95,31 @@ const UploadFile = () => {
         } else {
             if(window.confirm("Are You Sure?")){
                 e.preventDefault()
+
                 dispatch(loading_Action())
-                dispatch(delete_multiple_file(multipleFileDelete))
+                dispatch(delete_multiple_file(isCheck))
             }
         }
     }
+    console.log("isCheckes",isCheck)
 
-    // ========= CheckBox OnChange ==========
-    const handleChangeMultiple = (id) => {
-
-        if(multipleFileDelete.includes(id)){
-            const arrayId = multipleFileDelete.filter((i) => {
-                return i !== id
-            })
-            setMultipleFileDelete(arrayId)
-        } else {
-            setMultipleFileDelete([...multipleFileDelete, id])
+    // =========== All Delete =========
+    const handleSelectAll = (e) => {
+        setIsCheckAll(!isCheckAll);
+        setIsCheck( getUploadFiles[0] && getUploadFiles[0].GetFiles.length > 0 && getUploadFiles[0].GetFiles.map((li) => li._id));
+        if (isCheckAll) {
+            setIsCheck([]);
         }
-    }
-    
+    };
+
+    const handleClick = (e) => {
+        const { id, checked } = e.target;
+        setIsCheck([...isCheck, id]);
+        setIsCheckAll(false);
+        if (!checked) {
+            setIsCheck(isCheck.filter((item) => item !== id));
+        }
+    };
 
     return (
         <>  
@@ -155,17 +165,19 @@ const UploadFile = () => {
                     {/* ======= For Get Upload File List ====== */}
                     <br />
 
-                    {/* {
-                        isLoading ? null : <button className='btn btn-secondary mt-3'
-                                                   onClick={handleMultipleDelete}> 
-                                                        Delete All 
-                                            </button>
-                    } */}
-
                         <div className='item'>
-                            <label> Select All </label> <Checkbox onChange={(e) => handleChangeMultiple(e)}  />
+                            <label> Select All </label>
+
+                            <Checkbox type='checkbox' 
+                                      name="selectAll" 
+                                      id="selectAll" 
+                                      handleClick={handleSelectAll} 
+                                      isChecked={isCheckAll}  />
                             {
-                                isLoading ? null : <button className='btn btn-secondary mt-3'
+                                isLoading ? <button className='btn btn-secondary mt-3' disabled > 
+                                                        Delete All 
+                                                    </button> 
+                                            :  <button className='btn btn-secondary mt-3'
                                                    onClick={handleMultipleDelete}> 
                                                         Delete All 
                                                     </button>
@@ -180,12 +192,19 @@ const UploadFile = () => {
                                             {
                                                 elem.filetype === '.txt' ? (
                                                     <>
-                                                        <h6> {elem.filename} </h6>
+                                                        <h6 key={elem._id}> {elem.filename} </h6>
                                                         <img src='https://www.freeiconspng.com/uploads/txt-file-icon-free-search-download-as-png-ico-and-icns-iconseeker--1.png' 
                                                              alt='TXT' className='img'/>
-                                                            <Checkbox value={elem.public_id} 
-                                                                      onChange={() => handleChangeMultiple(elem.public_id)} /> 
+                                                                      
+                                                            <Checkbox
+                                                                type='checkbox' 
+                                                                key={elem._id} 
+                                                                name={elem._id}
+                                                                handleClick={handleClick}
+                                                                id={elem._id}
+                                                                isChecked={isCheck.includes(elem._id)} />
                                                             <br />
+
                                                         <button onClick={() => handleDelete(elem.public_id)}
                                                                 className='btn btn-small btn-danger'>
                                                                     Delete
@@ -200,9 +219,15 @@ const UploadFile = () => {
                                                         <h6> {elem.filename} </h6>
                                                         <img src='https://cdn4.vectorstock.com/i/1000x1000/62/88/monochrome-round-doc-file-icon-vector-5106288.jpg' 
                                                              alt='DOC' className='img'/> 
-                                                            <Checkbox value={elem.public_id} 
-                                                                      onChange={() => handleChangeMultiple(elem.public_id)} />
+                                                            <Checkbox 
+                                                                type='checkbox' 
+                                                                key={elem._id}  
+                                                                name={elem._id}
+                                                                handleClick={handleClick}
+                                                                id={elem._id}
+                                                                isChecked={isCheck.includes(elem._id)} />         
                                                             <br />
+
                                                         <button onClick={() => handleDelete(elem.public_id)} 
                                                                 className='btn btn-small btn-danger'>
                                                                     Delete
@@ -217,9 +242,15 @@ const UploadFile = () => {
                                                         <h6> {elem.filename} </h6>
                                                         <img src='https://cdn4.vectorstock.com/i/1000x1000/62/88/monochrome-round-doc-file-icon-vector-5106288.jpg' 
                                                              alt='DOCX' className='img'/>
-                                                            <Checkbox value={elem.public_id} 
-                                                                      onChange={() => handleChangeMultiple(elem.public_id)} />
+                                                            <Checkbox 
+                                                                type='checkbox' 
+                                                                key={elem._id}  
+                                                                name={elem._id}
+                                                                handleClick={handleClick}
+                                                                id={elem._id}
+                                                                isChecked={isCheck.includes(elem._id)} />       
                                                             <br />
+
                                                         <button onClick={() => handleDelete(elem.public_id)} 
                                                                 className='btn btn-small btn-danger'>
                                                                     Delete
@@ -234,9 +265,15 @@ const UploadFile = () => {
                                                         <h6> {elem.filename} </h6>
                                                         <img src='https://icons.iconarchive.com/icons/graphicloads/filetype/128/pdf-icon.png' 
                                                              alt='PDF' className='img'/>
-                                                            <Checkbox value={elem.public_id} 
-                                                                      onChange={() => handleChangeMultiple(elem.public_id)} /> 
+                                                            <Checkbox 
+                                                                type='checkbox' 
+                                                                key={elem._id}  
+                                                                name={elem._id}
+                                                                handleClick={handleClick}
+                                                                id={elem._id}
+                                                                isChecked={isCheck.includes(elem._id)} />      
                                                             <br />
+
                                                         <button onClick={() => handleDelete(elem.public_id)}
                                                                 className='btn btn-small btn-danger'>
                                                                     Delete
@@ -251,9 +288,15 @@ const UploadFile = () => {
                                                         <h6> {elem.filename} </h6>
                                                         <img src='https://as1.ftcdn.net/v2/jpg/04/46/40/84/1000_F_446408465_aqlGBK2DsZTvhkcDqV6rkaOvvEMtVmau.jpg' 
                                                              alt='XML' className='img'/>
-                                                            <Checkbox value={elem.public_id} 
-                                                                      onChange={() => handleChangeMultiple(elem.public_id)} /> 
+                                                            <Checkbox 
+                                                                type='checkbox' 
+                                                                key={elem._id}  
+                                                                name={elem._id}
+                                                                handleClick={handleClick}
+                                                                id={elem._id}
+                                                                isChecked={isCheck.includes(elem._id)} />      
                                                             <br />
+
                                                         <button onClick={() => handleDelete(elem.public_id)}
                                                                 className='btn btn-small btn-danger'>
                                                                     Delete
@@ -267,9 +310,15 @@ const UploadFile = () => {
                                                     <>
                                                         <h6> {elem.filename} </h6>
                                                         <img src={elem.filepath} alt='jpg' className='img' />
-                                                        <Checkbox value={elem.public_id} 
-                                                                  onChange={() => handleChangeMultiple(elem.public_id)} />
+                                                            <Checkbox 
+                                                                type='checkbox' 
+                                                                key={elem._id}  
+                                                                name={elem._id}
+                                                                handleClick={handleClick}
+                                                                id={elem._id}
+                                                                isChecked={isCheck.includes(elem._id)} />
                                                         <br />
+
                                                         <button onClick={() => handleDelete(elem.public_id)}
                                                                 className='btn btn-small btn-danger'>
                                                                     Delete
@@ -277,38 +326,6 @@ const UploadFile = () => {
                                                     </>
                                                 ) : null
                                             }  
-                                            
-                                            {/* {
-                                                elem.filetype === ".jpeg"  ? (
-                                                    <>
-                                                        <h6> {elem.filename} </h6>
-                                                        <img src={elem.filepath} alt='jpeg' className='img' />
-                                                        <Checkbox value={elem.public_id} 
-                                                                  onChange={() => handleChangeMultiple(elem.public_id)} />
-                                                        <br />
-                                                        <button onClick={() => handleDelete(elem.public_id)}
-                                                                className='btn btn-small btn-danger'>
-                                                                    Delete
-                                                        </button>
-                                                    </>
-                                                ) : null
-                                            }     
-                                            
-                                            {
-                                                elem.filetype === ".png"  ? (
-                                                    <>
-                                                        <h6> {elem.filename} </h6>
-                                                        <img src={elem.filepath} alt='png' className='img' />
-                                                        <Checkbox value={elem.public_id} 
-                                                                  onChange={() => handleChangeMultiple(elem.public_id)} />
-                                                        <br />
-                                                        <button onClick={() => handleDelete(elem.public_id)}
-                                                                className='btn btn-small btn-danger'>
-                                                                    Delete
-                                                        </button>
-                                                    </>
-                                                ) : null
-                                            }   */}
                                         </>
                                     )
                                 })
