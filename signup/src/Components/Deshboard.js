@@ -7,7 +7,6 @@ import debounce from "lodash.debounce"
 
 const Deshboard = () => {
 
-    const history = useHistory();
 
     // ========= For Searching ==============
     const [request, setRequest] = useState('')
@@ -37,7 +36,6 @@ const Deshboard = () => {
     const deleteUser = (email) => {
         window.confirm("Are You Sure?")
             dispatch(delete_User(email))
-
     }
 
 
