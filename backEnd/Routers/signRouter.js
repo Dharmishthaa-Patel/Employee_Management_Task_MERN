@@ -68,19 +68,19 @@ router.get('/getUploadFile',authenticate, async (req,res) => {
     try{
 
         // ============ Pagination ==========
-        const page = req.query.page
-        const limit = 5
+        const page  = req.query.page
+        const limitFile = req.query.limit
+        const limit = parseInt(limitFile)
+        
         const skip = (page - 1) * limit
 
 
         // ============ get Upload file List of authenticate user
         const totalFiles = req.authenticateUser.files
-        //console.log("totalFiles",totalFiles)
 
 
         // =========== Count Total Pages ============= 
         let totalPage = Math.ceil(totalFiles.length/limit)
-        //console.log("totalPage",totalPage)
 
         const aggregateQuery = []
     
@@ -100,7 +100,6 @@ router.get('/getUploadFile',authenticate, async (req,res) => {
             }
         )
         const uploadData = await Employee.aggregate([aggregateQuery])
-        //console.log("uploadData",uploadData);
         
         // =========== Send Res ==========
         res.send({uploadData, totalPage})
@@ -183,9 +182,10 @@ router.get('/checkCookie', async (req,res) => {
 // ============ Get User Data ==================
 router.get('/getUser',authenticate, async (req, res) => {
     try {
-        
+
         const { page, sort, Request } = req.query
-        const limit = 5
+        const limitFile = req.query.limit
+        const limit = parseInt(limitFile)
         let skip = (page - 1) * limit;
         const LoginUser = req.authenticateUser
         

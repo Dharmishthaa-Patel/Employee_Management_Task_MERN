@@ -11,8 +11,11 @@ const UploadFile = () => {
 
     // ============ For Upload File ===========
     const [fileInput, setfileInput] = useState()
+
     // =========== For Pagination ============
     const [pageNo, setPageNo] = useState(1)
+    const [currentPage, setCurrentPage] = useState(5)
+
     // =========== DeleteMultiple File =========== 
     const [multipleFileDelete, setMultipleFileDelete] = useState([])
 
@@ -65,8 +68,8 @@ const UploadFile = () => {
 
     useEffect(() => {
         setIsCheckAll(false)
-        dispatch(get_upload_file(pageNo))
-    },[isLoading, fileInput, pageNo, DeleteUser,dispatch])
+        dispatch(get_upload_file(pageNo,currentPage))
+    },[isLoading, fileInput, pageNo, currentPage, DeleteUser,dispatch])
 
 
     // ============ Input onChange =============
@@ -74,7 +77,7 @@ const UploadFile = () => {
         setfileInput({...fileInput, ...e.target.files})
     }
 
-    // ============== DeleteFile ================
+    // ============== Single Delete File ================
     const handleDelete = (file) => {
 
         setMultipleFileDelete([])
@@ -84,7 +87,7 @@ const UploadFile = () => {
         dispatch(delete_file(file))
     }
 
-    // ============ DeleteMultiple File =============
+    // ============ Multiple Delete File =============
     const handleMultipleDelete = (e) => {
         
         if(isCheck.length <= 0){
@@ -101,25 +104,34 @@ const UploadFile = () => {
             }
         }
     }
-    console.log("isCheckes",isCheck)
+    console.log("isCheckes",currentPage)
 
-    // =========== All Delete =========
+    // =========== All Delete CheckBox OnChange =========
     const handleSelectAll = (e) => {
-        setIsCheckAll(!isCheckAll);
-        setIsCheck( getUploadFiles[0] && getUploadFiles[0].GetFiles.length > 0 && getUploadFiles[0].GetFiles.map((li) => li._id));
-        if (isCheckAll) {
-            setIsCheck([]);
-        }
-    };
+        setIsCheckAll(!isCheckAll)
+        console.log("isCheck All", !isCheckAll)
 
-    const handleClick = (e) => {
-        const { id, checked } = e.target;
-        setIsCheck([...isCheck, id]);
-        setIsCheckAll(false);
-        if (!checked) {
-            setIsCheck(isCheck.filter((item) => item !== id));
+        setIsCheck(getUploadFiles[0] && getUploadFiles[0].GetFiles.length > 0 && getUploadFiles[0].GetFiles.map((li) => li._id))
+        if (isCheckAll) {
+            setIsCheck([])
         }
-    };
+    }
+
+    // ========== For Select CheckBox Click ========
+    const handleClick = (e) => {
+        const { id, checked } = e.target
+        setIsCheck([...isCheck, id])
+        setIsCheckAll(false)
+        if (!checked) {
+            setIsCheck(isCheck.filter((item) => item !== id))
+        }
+    }
+
+    // =========== For Pagination ===========
+    const handlePagination = (e) => {
+        // console.log("value",e.target.value);
+        setCurrentPage(e.target.value)
+    }
 
     return (
         <>  
@@ -131,7 +143,7 @@ const UploadFile = () => {
                 <form onSubmit={handleSubmit}>
                         {
                             isLoading ? (
-                                // ======== Disable at Loading Time
+                                // ======== Disable at Loading Time ==========
                                 <>
                                     <input type='file' disabled /> <br />
                                     <button  disabled className='btn btn-dark mt-3'> 
@@ -150,7 +162,16 @@ const UploadFile = () => {
                                 </>
                             )
                         }
+                        <br />
                 </form>
+
+                <select className='dropDown' onClick={(e) => handlePagination(e)} >
+                                <option value="5"> 5 </option>
+                                <option value="10"> 10 </option>
+                                <option value="15"> 15 </option>
+                                <option value="20"> 20 </option>
+                </select>
+                 <br />
 
                 {/* ========= Loader ======== */}
                     {
@@ -166,13 +187,13 @@ const UploadFile = () => {
                     <br />
 
                         <div className='item'>
-                            <label> Select All </label>
+                            <label> Select All </label>&nbsp;
 
                             <Checkbox type='checkbox' 
                                       name="selectAll" 
                                       id="selectAll" 
                                       handleClick={handleSelectAll} 
-                                      isChecked={isCheckAll}  />
+                                      isChecked={isCheckAll}  /><br />
                             {
                                 isLoading ? <button className='btn btn-secondary mt-3' disabled > 
                                                         Delete All 
@@ -192,7 +213,7 @@ const UploadFile = () => {
                                             {
                                                 elem.filetype === '.txt' ? (
                                                     <>
-                                                        <h6 key={elem._id}> {elem.filename} </h6>
+                                                        <h6> {elem.filename} </h6>
                                                         <img src='https://www.freeiconspng.com/uploads/txt-file-icon-free-search-download-as-png-ico-and-icns-iconseeker--1.png' 
                                                              alt='TXT' className='img'/>
                                                                       
@@ -339,8 +360,9 @@ const UploadFile = () => {
                             variant='outlined'
                             size='medium'
                             showFirstButton={true}                   
-                            onChange={(event, value) => { setPageNo(value) }}
+                            onChange={(event, value) =>  setPageNo(value) }
                         />
+                        
             </div>
         </>
     )

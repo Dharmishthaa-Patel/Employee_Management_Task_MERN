@@ -11,8 +11,11 @@ const Deshboard = () => {
 
     // ========= For Searching ==============
     const [request, setRequest] = useState('')
+
     // ============= For Pagination  ============
     const [page, setPage] = useState(1)
+    const [currentPage, setCurrentPage] = useState(5)
+
     // ========= For Sorting  =========
     const [sort, setSort] = useState('ascending')
     
@@ -37,17 +40,25 @@ const Deshboard = () => {
 
     }
 
+
     // ============= For seraching ========== 
     const handleSearch = debounce((value) => {
         setPage(1)
         setRequest(value)
     }, 500)
-    
+
+
+    // =========== For Pagination ===========
+    const handlePagination = (e) => {
+        // console.log("value",e.target.value);
+        setCurrentPage(e.target.value)
+    }
+
     
     // ============ Get Request ===========
     useEffect(() => {
-        dispatch(get_User(page,sort,request))        
-    }, [page, sort, request, dispatch, DeleteUser])
+        dispatch(get_User(page,sort,request,currentPage))        
+    }, [page, sort, request, currentPage, dispatch, DeleteUser])
     
 
     return (        
@@ -83,6 +94,15 @@ const Deshboard = () => {
                     Decsending
                 </button>
             </div> 
+            <div>
+            <select className='dropDown' onClick={(e) => handlePagination(e)} >
+                                <option value="5"> 5 </option>
+                                <option value="10"> 10 </option>
+                                <option value="15"> 15 </option>
+                                <option value="20"> 20 </option>
+                </select>
+                 <br />
+            </div>
             
             <hr />
             {

@@ -4,8 +4,8 @@ import { toast } from 'react-toastify'
 
 
 // ============= GetList Of Upload File ============
-export const get_upload_file = (page) => dispatch => {
-    axios.get(`/getUploadFile/?page=${page}`)
+export const get_upload_file = (page , limit) => dispatch => {
+    axios.get(`/getUploadFile/?page=${page}&limit=${limit}`)
     .then(res => {
         const getUploadFile = res.data
         dispatch({
@@ -193,9 +193,9 @@ export const login_User = (values) => dispatch => {
 }
 
 // ============== Get Data =================
-export const get_User = (page,sort,Request) => dispatch => {
+export const get_User = (page,sort,Request,limit) => dispatch => {
     return (
-        axios.get(`/getUser/?page=${page}&sort=${sort}&Request=${Request}`)
+        axios.get(`/getUser/?page=${page}&sort=${sort}&Request=${Request}&limit=${limit}`)
             .then(res => {
                 const getUserData = res.data
                 dispatch({ 
